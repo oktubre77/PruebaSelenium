@@ -7,12 +7,13 @@ require('dotenv').config();
 async function dexter(){
 
        // Buscar un Producto2
-       var searchString = "NI_CW3411-402";
+       var searchString = "Zapatillas";
            
        let driver = await new Builder().forBrowser("chrome").build();
                
        //await driver.get(process.env.URL_PROD);
-       await driver.get(process.env.URL_DEV_DEXTER);        
+       //await driver.get(process.env.URL_DEV_DEXTER);
+       await driver.get('http://dexter.com.ar');                
 
         //To send a search query by passing the value in searchString.
         await driver.findElement(By.name("q")).sendKeys(searchString,Key.RETURN);
@@ -20,15 +21,27 @@ async function dexter(){
         //Verify the page title and print it
         var title = await driver.getTitle();
         console.log('Title is:',title);
-
-        //Elegir Talle 41
-        console.log("Elige el producto en la grilla")
-        await driver.findElement(By.xpath("//*[@id='product-search-results']/div[2]/div[2]/div[2]/div[1]/div/div/div[1]/a[1]")).click();
         
-        await driver.sleep(2000);
-       //Boton comprar PDP
-       console.log("Elige el talle 41")
-        await driver.findElement(By.xpath("//*[@id='size-1']/div[1]/li[6]")).click();
+       //Elegir Producto random de la grilla, calculando un index random
+       console.log("Elige el producto en la grilla")
+       var grilla = await driver.findElements(By.className("image-container"));
+       const indexRandom = Math.round(Math.random()*grilla.length);
+       grilla[indexRandom].click();
+
+        
+       await driver.sleep(2000);
+       //Elig un talle random de la grilla, descartando aquellos que tienen la clase "disabled"
+       console.log("Elige el talle")
+       var sizes = await driver.findElements(By.className("variation-attribute-size "));
+       var enabledSizes = [];
+       for(let i=0; i<sizes.length; i++){
+              var f = await sizes[i].getAttribute('class');
+              if(!f.includes('disabled'))enabledSizes.push(sizes[i])
+       }
+
+       const indexSizeRandom = Math.round(Math.random()*enabledSizes.length);
+       enabledSizes[indexSizeRandom].click();
+
         
        //Boton agregar al carrito
        await driver.sleep(3000);
