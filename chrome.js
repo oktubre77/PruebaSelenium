@@ -7,7 +7,7 @@ require('dotenv').config();
 async function dexter(){
 
        // Buscar un Producto2
-       var searchString = "Zapatillas";
+       var searchString = "NI_CW3411-402";
            
        let driver = await new Builder().forBrowser("chrome").build();
                
